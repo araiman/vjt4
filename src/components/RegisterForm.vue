@@ -35,32 +35,32 @@ export default {
   methods: {
     async register() {
       if (!this.userName) {
-        alert(this.blank("ユーザ名"));
+        alert(this.invalid("ユーザ名"));
         return;
       }
       if (!this.mailAddress ||
           !this.validEmail(this.mailAddress)) {
-        alert(this.blank("メールアドレス"));
+        alert(this.invalid("メールアドレス"));
         return;
       }
       if (!this.password) {
-        alert(this.blank("パスワード"));
+        alert(this.invalid("パスワード"));
         return;
       }
 
       const users = await db.collection("users");
 
-      if (await users.where("name", "==", this.userName).get().size) {
+      if ((await users.where("name", "==", this.userName).get()).size) {
         alert(this.duplicated("ユーザ名"));
         return;
       }
 
-      if (await users.where("mailAddress", "==", this.mailAddress).get().size) {
+      if ((await users.where("mailAddress", "==", this.mailAddress).get()).size) {
         alert(this.duplicated("メールアドレス"));
         return;
       }
 
-      if (await users.where("password", "==", this.password).get().size) {
+      if ((await users.where("password", "==", this.password).get()).size) {
         alert(this.duplicated("パスワード"));
         return;
       }
@@ -83,8 +83,8 @@ export default {
       const emailValidator = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return emailValidator.test(email);
     },
-    blank(target) {
-      return `${target}が入力されていません。`;
+    invalid(target) {
+      return `${target}が入力されていないか、不正な形式です。`;
     },
     duplicated(target) {
       return `同一${target}のユーザが存在します。変更してください。`;
