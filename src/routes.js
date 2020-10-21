@@ -1,5 +1,5 @@
-import LoginForm from "@/components/RegisterForm"
+import RegisterForm from "@/components/RegisterForm"
 
 export const routes = [
-  {path: "", component: LoginForm, name: "registerForm"}
+  {path: "", component: RegisterForm, name: "registerForm"}
 ]
