@@ -66,10 +66,10 @@ export default {
       }
 
       await users.doc().set({
-        "name": this.userName,
-        "mailAddress": this.mailAddress,
-        "password": this.password,
-        "balance": 0
+        name: this.userName,
+        mailAddress: this.mailAddress,
+        password: this.password,
+        balance: 0
       })
           .then(() => {
             console.log("登録成功!")
