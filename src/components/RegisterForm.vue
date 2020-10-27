@@ -22,46 +22,46 @@
 </template>
 
 <script>
-import {db} from "@/main"
+import {db} from '@/main'
 
 export default {
   data() {
     return {
-      userName: "",
-      mailAddress: "",
-      password: ""
+      userName: '',
+      mailAddress: '',
+      password: ''
     }
   },
   methods: {
     async register() {
       if (!this.userName) {
-        alert(this.invalid("ユーザ名"));
+        alert(this.invalid('ユーザ名'));
         return;
       }
       if (!this.mailAddress ||
           !this.validEmail(this.mailAddress)) {
-        alert(this.invalid("メールアドレス"));
+        alert(this.invalid('メールアドレス'));
         return;
       }
       if (!this.password) {
-        alert(this.invalid("パスワード"));
+        alert(this.invalid('パスワード'));
         return;
       }
 
-      const users = await db.collection("users");
+      const users = await db.collection('users');
 
-      if ((await users.where("name", "==", this.userName).get()).size) {
-        alert(this.duplicated("ユーザ名"));
+      if ((await users.where('name', '==', this.userName).get()).size) {
+        alert(this.duplicated('ユーザ名'));
         return;
       }
 
-      if ((await users.where("mailAddress", "==", this.mailAddress).get()).size) {
-        alert(this.duplicated("メールアドレス"));
+      if ((await users.where('mailAddress', '==', this.mailAddress).get()).size) {
+        alert(this.duplicated('メールアドレス'));
         return;
       }
 
-      if ((await users.where("password", "==", this.password).get()).size) {
-        alert(this.duplicated("パスワード"));
+      if ((await users.where('password', '==', this.password).get()).size) {
+        alert(this.duplicated('パスワード'));
         return;
       }
 
@@ -72,15 +72,15 @@ export default {
         balance: 0
       })
           .then(() => {
-            console.log("登録成功!")
+            console.log('登録成功!')
           })
           .catch(e => {
             console.log(e);
-            alert("登録に失敗しました。再度新規登録を試みてください。");
+            alert('登録に失敗しました。再度新規登録を試みてください。');
           })
     },
     validEmail(email) {
-      const emailValidator = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const emailValidator = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return emailValidator.test(email);
     },
     invalid(target) {
