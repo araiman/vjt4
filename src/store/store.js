@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {db} from '@/main'
-import {validationMessage} from "@/validation";
+import {validationMessage} from '@/validation';
 
 Vue.use(Vuex)
 
@@ -11,7 +11,6 @@ export const store = new Vuex.Store({
     async register(_, payload) {
       const users = await db.collection('users');
 
-      console.log(payload);
       if ((await users.where('name', '==', payload.userName).get()).size) {
         alert(validationMessage.duplicatedField('ユーザ名'));
         return;

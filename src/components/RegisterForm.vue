@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import {validationMessage} from "@/validation";
-import {validator} from "@/validation";
+import {validationMessage} from '@/validation';
+import {validator} from '@/validation';
 
 export default {
   data() {
