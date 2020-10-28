@@ -1,6 +1,7 @@
 import Vue from 'vue'
+import { store } from './store/store'
 import VueRouter from 'vue-router';
-import {routes} from '@/routes';
+import {routes} from './routes';
 import {firestorePlugin} from 'vuefire'
 import firebase from 'firebase'
 import App from './App.vue'
@@ -19,6 +20,7 @@ export const db = firebase.firestore()
 export const auth = firebase.auth()
 
 new Vue({
+  store,
   router,
   render: h => h(App),
 }).$mount('#app')

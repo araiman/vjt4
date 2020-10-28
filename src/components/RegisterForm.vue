@@ -22,7 +22,8 @@
 </template>
 
 <script>
-import {db} from '@/main'
+import {validationMessage} from "@/validation";
+import {validator} from "@/validation";
 
 export default {
   data() {
@@ -33,61 +34,25 @@ export default {
     }
   },
   methods: {
-    async register() {
-      if (!this.userName) {
-        alert(this.invalid('ユーザ名'));
+    register() {
+      if (validator.validUserName(this.userName)) {
+        alert(validationMessage.invalidField('ユーザ名'));
         return;
       }
-      if (!this.mailAddress ||
-          !this.validEmail(this.mailAddress)) {
-        alert(this.invalid('メールアドレス'));
+      if (validator.validEmail(this.mailAddress)) {
+        alert(validationMessage.invalidField('メールアドレス'));
         return;
       }
-      if (!this.password) {
-        alert(this.invalid('パスワード'));
-        return;
-      }
-
-      const users = await db.collection('users');
-
-      if ((await users.where('name', '==', this.userName).get()).size) {
-        alert(this.duplicated('ユーザ名'));
+      if (validator.validPassword(this.password)) {
+        alert(validationMessage.invalidField('パスワード'));
         return;
       }
 
-      if ((await users.where('mailAddress', '==', this.mailAddress).get()).size) {
-        alert(this.duplicated('メールアドレス'));
-        return;
-      }
-
-      if ((await users.where('password', '==', this.password).get()).size) {
-        alert(this.duplicated('パスワード'));
-        return;
-      }
-
-      await users.doc().set({
-        name: this.userName,
+      this.$store.dispatch('register', {
+        userName: this.userName,
         mailAddress: this.mailAddress,
-        password: this.password,
-        balance: 0
-      })
-          .then(() => {
-            console.log('登録成功!')
-          })
-          .catch(e => {
-            console.log(e);
-            alert('登録に失敗しました。再度新規登録を試みてください。');
-          })
-    },
-    validEmail(email) {
-      const emailValidator = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return emailValidator.test(email);
-    },
-    invalid(target) {
-      return `${target}が入力されていないか、不正な形式です。`;
-    },
-    duplicated(target) {
-      return `同一${target}のユーザが存在します。変更してください。`;
+        password: this.password
+      });
     }
   }
 }
