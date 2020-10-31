@@ -37,7 +37,7 @@ export const store = new Vuex.Store({
         balance: 0
       })
         .then(() => {
-          return Promise.resolve();
+          return;
         })
         .catch(e => {
           console.log(e);
@@ -53,7 +53,7 @@ export const store = new Vuex.Store({
           if (!user.size) return Promise.reject('メールアドレス、もしくはパスワードが誤っています。入力し直してください。');
 
           context.commit('setUser', user.docs[0].data());
-          return Promise.resolve();
+          return;
         })
         .catch(e => {
           console.log(e);
