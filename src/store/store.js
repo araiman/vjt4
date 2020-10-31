@@ -9,6 +9,11 @@ export const store = new Vuex.Store({
   state: {
     user: {},
   },
+  getters: {
+    loginUser: state => {
+      return state.user;
+    }
+  },
   mutations: {
     setUser(state, user) {
       Object.assign(state.user, user);
