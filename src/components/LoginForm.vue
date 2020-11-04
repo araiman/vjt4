@@ -1,6 +1,6 @@
 <template>
   <div id="content">
-    <h1>ログイン画面</h1>
+    <h1 class="title">ログイン画面</h1>
     <table>
       <tr>
         <td>メールアドレス</td>
