@@ -18,6 +18,7 @@
       </table>
       <input type="button" value="新規登録" @click="register">
     </form>
+    <router-link :to="{name: 'loginForm'}">ログインはこちらから</router-link>
   </div>
 </template>
 
@@ -52,7 +53,13 @@ export default {
         userName: this.userName,
         mailAddress: this.mailAddress,
         password: this.password
-      });
+      })
+      .then(() => {
+        this.$router.push({name: 'users'});
+      })
+      .catch((errorMessage) => {
+        alert(errorMessage);
+      })
     }
   }
 }
