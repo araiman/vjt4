@@ -17,6 +17,9 @@ export const store = new Vuex.Store({
   mutations: {
     setUser(state, user) {
       Object.assign(state.user, user);
+    },
+    unsetUser(state) {
+      state.user = {};
     }
   },
   actions: {
