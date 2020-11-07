@@ -7,6 +7,16 @@
     </div>
     <div id="content">
       <h1 class="title">ユーザ一覧</h1>
+      <table>
+        <tr>
+          <th>ユーザ名</th>
+          <th></th>
+          <th></th>
+        </tr>
+        <template v-for="target in users">
+          <user :target="target" v-bind:key="target.name"></user>
+        </template>
+      </table>
     </div>
   </div>
 </template>
@@ -22,11 +32,14 @@
 </style>
 
 <script>
+import User from './User'
+
 export default {
   data() {
     return {
       loginUserName: this.$store.getters.loginUser.mailAddress,
-      loginUserBalance: this.$store.getters.loginUser.balance
+      loginUserBalance: this.$store.getters.loginUser.balance,
+      users: this.$store.getters.users
     }
   },
   methods: {
@@ -34,6 +47,9 @@ export default {
       this.$store.commit('unsetUser');
       this.$router.push({name: 'loginForm'});
     }
+  },
+  components: {
+    User
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
