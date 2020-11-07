@@ -1,6 +1,6 @@
 <template>
   <transition name="modal">
-    <div class="modal-mask" @click="$emit('switchWalletVisibility')">
+    <div class="modal-mask" @click="$emit('switchVisibility')">
       <div class="modal-wrapper">
         <div class="modal-container">
           <div class="modal-header">

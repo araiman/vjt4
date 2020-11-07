@@ -5,7 +5,7 @@
       <td><button @click="switchWalletVisibility">walletを見る</button></td>
       <td><button>送る</button></td>
     </tr>
-    <modal v-if="isWalletVisible" v-on:switchWalletVisibility="switchWalletVisibility">
+    <modal v-if="isWalletVisible" v-on:switchVisibility="switchWalletVisibility">
       <template v-slot:header>
         {{ target.name }}さんの残高
       </template>
