@@ -14,10 +14,23 @@
           <th></th>
         </tr>
         <template v-for="target in users">
-          <user :target="target" v-bind:key="target.name"></user>
+          <user :target="target" v-bind:key="target.id"></user>
         </template>
       </table>
     </div>
+    <modal v-if="isWalletVisible">
+      <template v-slot:header>
+        {{ actionTargetUser.name }}さんの残高
+      </template>
+      <template v-slot:body>
+        {{ actionTargetUser.balance }}
+      </template>
+      <template v-slot:footer>
+        <button class="modal-default-button" @click="closeWallet">
+          close
+        </button>
+      </template>
+    </modal>
   </div>
 </template>
 
@@ -33,6 +46,7 @@
 
 <script>
 import User from './User'
+import Modal from './Modal'
 
 export default {
   data() {
@@ -42,14 +56,26 @@ export default {
       users: this.$store.getters.users
     }
   },
+  computed: {
+    isWalletVisible() {
+      return this.$store.getters.isWalletVisible;
+    },
+    actionTargetUser() {
+      return this.$store.getters.actionTargetUser;
+    },
+  },
   methods: {
     logout() {
-      this.$store.commit('unsetUser');
+      this.$store.commit('unsetLoginUser');
       this.$router.push({name: 'loginForm'});
-    }
+    },
+    closeWallet() {
+      this.$store.commit('setWalletVisibility', !this.isWalletVisible);
+    },
   },
   components: {
-    User
+    User,
+    Modal
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {

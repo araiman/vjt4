@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import {db} from '@/main'
 import {validationMessage} from '@/validation';
-import _ from 'lodash'
 
 Vue.use(Vuex)
 
@@ -10,18 +9,21 @@ export const store = new Vuex.Store({
   state: {
     user: {},
     users: [],
+    actionTargetUser: {},
     isWalletVisible: false
   },
   getters: {
     loginUser: state => state.user,
     users: state => state.users,
+    actionTargetUser: state => state.actionTargetUser,
     isWalletVisible: state => state.isWalletVisible
   },
   mutations: {
-    setUser: (state, user) => Object.assign(state.user, user),
-    unsetUser: state => state.user = {},
+    setLoginUser: (state, user) => state.user = user,
+    unsetLoginUser: state => state.user = {},
     setUsers: (state, users) => state.users = users,
-    setWalletVisibility: (state, value) => state.isWalletVisible = value
+    setActionTargetUser: (state, user) => state.actionTargetUser = user,
+    setWalletVisibility: (state, value) => state.isWalletVisible = value,
   },
   actions: {
     register: async (_, payload) => {
@@ -54,29 +56,33 @@ export const store = new Vuex.Store({
         })
     },
     login: async (context, payload) => {
-      const users = db.collection('users');
+      const usersQuerySnapShot = db.collection('users');
 
-      await users
+      await usersQuerySnapShot
         .where('mailAddress', '==', payload.mailAddress)
         .where('password', '==', payload.password)
         .get()
-        .then(user => {
-          if (!user.size) return Promise.reject('メールアドレス、もしくはパスワードが誤っています。入力し直してください。');
+        .then(userDocument => {
+          if (!userDocument.size) return Promise.reject('メールアドレス、もしくはパスワードが誤っています。入力し直してください。');
 
-          context.commit('setUser', user.docs[0].data());
+          const loginUser = {
+            id: userDocument.docs[0].id,
+            ...userDocument.docs[0].data()
+          }
+          context.commit('setLoginUser', loginUser);
         })
         .catch(e => {
           console.log(e);
           return Promise.reject('ログインに失敗しました。再度新規登録を試みてください。');
         })
 
-      await users
+      await usersQuerySnapShot
         .get()
-        .then(users => {
-          users.docs.map(user => user.data());
-          context.commit('setUsers', users.docs
-            .filter(user => !_.isEqual(context.getters.loginUser, user.data()))
-            .map(user => user.data()));
+        .then(usersDocument => {
+          const usersOtherThanLoginUser = usersDocument.docs
+            .filter(user => user.id !== context.getters.loginUser.id)
+            .map(user => Object.assign({ id: user.id }, user.data()));
+          context.commit('setUsers', usersOtherThanLoginUser);
         })
     }
   }
