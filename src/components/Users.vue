@@ -1,8 +1,8 @@
 <template>
   <div>
     <div id="header">
-      <div>{{ loginUserName }}さんようこそ！！</div>
-      <div>残高 : {{ loginUserBalance }}</div>
+      <div>{{ loginUser.name }}さんようこそ！！</div>
+      <div>残高 : {{ loginUser.balance }}</div>
       <button class="logout" @click="logout">ログアウト</button>
     </div>
     <div id="content">
@@ -31,6 +31,19 @@
         </button>
       </template>
     </modal>
+    <modal v-if="isSendMoneyFormVisible">
+      <template v-slot:header>
+        あなたの残高:{{ loginUser.balance }} <br> 送る金額
+      </template>
+      <template v-slot:body>
+        <input type="number" v-model="sendAmount" />
+      </template>
+      <template v-slot:footer>
+        <button class="modal-default-button" @click="sendMoney">
+          送信
+        </button>
+      </template>
+    </modal>
   </div>
 </template>
 
@@ -51,18 +64,35 @@ import Modal from './Modal'
 export default {
   data() {
     return {
-      loginUserName: this.$store.getters.loginUser.mailAddress,
-      loginUserBalance: this.$store.getters.loginUser.balance,
-      users: this.$store.getters.users
     }
   },
   computed: {
+    loginUser() {
+      return this.$store.getters.loginUser
+    },
+    users() {
+      return this.$store.getters.users
+    },
     isWalletVisible() {
       return this.$store.getters.isWalletVisible;
+    },
+    isSendMoneyFormVisible() {
+      return this.$store.getters.isSendMoneyFormVisible;
+    },
+    targetUser() {
+      return this.$store.getters.actionTargetUser;
     },
     actionTargetUser() {
       return this.$store.getters.actionTargetUser;
     },
+    sendAmount: {
+      get() {
+        return this.amount;
+      },
+      set(value) {
+        this.amount = value;
+      }
+    }
   },
   methods: {
     logout() {
@@ -72,6 +102,32 @@ export default {
     closeWallet() {
       this.$store.commit('setWalletVisibility', !this.isWalletVisible);
     },
+    sendMoney() {
+      if (this.amount <= 0) {
+        alert('0より大きな金額を指定してください。')
+        this.$store.commit('setSendMoneyFormVisibility', !this.isSendMoneyFormVisible);
+        return;
+      }
+      if (this.loginUser.balance < this.amount) {
+        alert('送金額が残高を超えています。減らしてください。');
+        this.$store.commit('setSendMoneyFormVisibility', !this.isSendMoneyFormVisible);
+        return;
+      }
+
+      try {
+        this.$store.dispatch('sendMoney', {
+          amount: this.amount,
+          from: this.loginUser,
+          to: this.targetUser
+        })
+      } catch (e) {
+        console.log(e);
+        alert('送金に失敗しました。再度送金を試みてください。');
+      } finally {
+        this.amount = 0;
+        this.$store.commit('setSendMoneyFormVisibility', !this.isSendMoneyFormVisible);
+      }
+    }
   },
   components: {
     User,
