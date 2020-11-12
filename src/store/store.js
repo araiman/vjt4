@@ -99,8 +99,10 @@ export const store = new Vuex.Store({
       const updatedUsers = (await users.get())
         .docs
         .map(user => Object.assign({ id: user.id}, user.data()));
-      context.commit('setLoginUser', updatedUsers.filter(user => user.id === payload.from.id)[0]);
-      context.commit('setUsers', updatedUsers.filter(user => user.id !== payload.from.id));
+      const loginUser = updatedUsers.filter(user => user.id === payload.from.id)[0];
+      const usersExcludingLoginOne = updatedUsers.filter(user => user.id !== payload.from.id);
+      context.commit('setLoginUser', loginUser);
+      context.commit('setUsers', usersExcludingLoginOne);
     }
   }
 })
